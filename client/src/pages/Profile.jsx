@@ -26,6 +26,11 @@ const Profile = () => {
     e.preventDefault();
     setLoading(true);
     setAlert(null);
+    if (formData.phone && !/^\d{10}$/.test(formData.phone.trim())) {
+      setAlert({ type: 'error', message: 'Phone number must be exactly 10 digits' });
+      return;
+    }
+
     try {
       await updateUser(formData);
       setAlert({ type: 'success', message: 'Profile updated successfully!' });

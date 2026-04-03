@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import API from '../api';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
-import Alert from '../components/Alert';
+import Popup from '../components/Popup';
 import './EventForm.css';
 
 const EventDetails = () => {
@@ -14,7 +14,7 @@ const EventDetails = () => {
   const [isRegistered, setIsRegistered] = useState(false);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
-  const [alert, setAlert] = useState(null);
+  const [popup, setPopup] = useState(null);
 
   const fetchEvent = async () => {
     try {
@@ -35,28 +35,56 @@ const EventDetails = () => {
     try {
       await API.post(`/registrations/${id}`);
       setIsRegistered(true);
-      setAlert({ type: 'success', message: 'Successfully registered for the event!' });
+      setPopup({
+        type: 'success',
+        title: 'Registration Successful!',
+        message: 'You have successfully registered for this event.',
+        onConfirm: () => setPopup(null)
+      });
       fetchEvent();
     } catch (err) {
-      setAlert({ type: 'error', message: err.response?.data?.message || 'Registration failed' });
+      setPopup({
+        type: 'error',
+        title: 'Registration Failed',
+        message: err.response?.data?.message || 'Failed to register',
+        onConfirm: () => setPopup(null)
+      });
     } finally {
       setActionLoading(false);
     }
   };
 
   const handleCancelRegistration = async () => {
-    if (!window.confirm('Are you sure you want to cancel your registration?')) return;
-    setActionLoading(true);
-    try {
-      await API.delete(`/registrations/${id}`);
-      setIsRegistered(false);
-      setAlert({ type: 'success', message: 'Registration cancelled' });
-      fetchEvent();
-    } catch (err) {
-      setAlert({ type: 'error', message: err.response?.data?.message || 'Failed to cancel registration' });
-    } finally {
-      setActionLoading(false);
-    }
+    setPopup({
+      type: 'confirm',
+      title: 'Cancel Registration',
+      message: 'Are you sure you want to cancel your registration for this event?',
+      onConfirm: async () => {
+        setPopup(null);
+        setActionLoading(true);
+        try {
+          await API.delete(`/registrations/${id}`);
+          setIsRegistered(false);
+          setPopup({
+            type: 'success',
+            title: 'Success',
+            message: 'Your registration has been cancelled.',
+            onConfirm: () => setPopup(null)
+          });
+          fetchEvent();
+        } catch (err) {
+          setPopup({
+            type: 'error',
+            title: 'Error',
+            message: err.response?.data?.message || 'Failed to cancel registration',
+            onConfirm: () => setPopup(null)
+          });
+        } finally {
+          setActionLoading(false);
+        }
+      },
+      onCancel: () => setPopup(null)
+    });
   };
 
   if (loading) return <LoadingSpinner text="Loading event details..." />;
@@ -76,7 +104,7 @@ const EventDetails = () => {
 
   return (
     <div className="event-details-page">
-      {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
+      {popup && <Popup {...popup} />}
 
       <div className="event-details-card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
@@ -109,6 +137,13 @@ const EventDetails = () => {
             <div className="meta-content">
               <span className="meta-label">Venue</span>
               <span className="meta-value">{event.venue}</span>
+            </div>
+          </div>
+          <div className="meta-item">
+            <span className="meta-icon">🌍</span>
+            <div className="meta-content">
+              <span className="meta-label">Location</span>
+              <span className="meta-value">{event.location}</span>
             </div>
           </div>
           <div className="meta-item">

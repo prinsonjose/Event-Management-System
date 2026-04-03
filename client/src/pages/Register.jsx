@@ -36,6 +36,27 @@ const Register = () => {
     setError('');
     setSuccess('');
 
+    if (!formData.name.trim() || !formData.email.trim() || !formData.password || !formData.confirmPassword || !formData.phone.trim() || !formData.college.trim()) {
+      setError('Please fill in all required fields');
+      return;
+    }
+    
+    // Improved role-based mandatory fields
+    if (role === 'admin' && !formData.department.trim()) {
+      setError('Please enter your department');
+      return;
+    }
+    
+    if (role === 'student' && (!formData.course.trim() || !formData.year || !formData.semester)) {
+      setError('Please fill in all academic details');
+      return;
+    }
+
+    if (!/^\d{10}$/.test(formData.phone.trim())) {
+      setError('Phone number must be exactly 10 digits');
+      return;
+    }
+
     if (!isPasswordValid) {
       setError('Password does not meet all requirements');
       return;
@@ -125,31 +146,31 @@ const Register = () => {
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="phone">Phone Number</label>
-              <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="+91 98765 43210" />
+              <label htmlFor="phone">Phone Number *</label>
+              <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="9876543210" required />
             </div>
             <div className="form-group">
-              <label htmlFor="college">College Name</label>
-              <input type="text" id="college" name="college" value={formData.college} onChange={handleChange} placeholder="Your college name" />
+              <label htmlFor="college">College Name *</label>
+              <input type="text" id="college" name="college" value={formData.college} onChange={handleChange} placeholder="Your college name" required />
             </div>
           </div>
 
           {role === 'admin' && (
             <div className="form-group">
-              <label htmlFor="department">Department</label>
-              <input type="text" id="department" name="department" value={formData.department} onChange={handleChange} placeholder="Computer Science" />
+              <label htmlFor="department">Department *</label>
+              <input type="text" id="department" name="department" value={formData.department} onChange={handleChange} placeholder="Computer Science" required />
             </div>
           )}
 
           {role === 'student' && (
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="course">Course</label>
-                <input type="text" id="course" name="course" value={formData.course} onChange={handleChange} placeholder="B.Tech CSE" />
+                <label htmlFor="course">Course *</label>
+                <input type="text" id="course" name="course" value={formData.course} onChange={handleChange} placeholder="B.Tech CSE" required />
               </div>
               <div className="form-group">
-                <label htmlFor="year">Year</label>
-                <select id="year" name="year" value={formData.year} onChange={handleChange}>
+                <label htmlFor="year">Year *</label>
+                <select id="year" name="year" value={formData.year} onChange={handleChange} required>
                   <option value="">Select year</option>
                   <option value="1st">1st Year</option>
                   <option value="2nd">2nd Year</option>
@@ -159,8 +180,8 @@ const Register = () => {
                 </select>
               </div>
               <div className="form-group">
-                <label htmlFor="semester">Semester</label>
-                <select id="semester" name="semester" value={formData.semester} onChange={handleChange}>
+                <label htmlFor="semester">Semester *</label>
+                <select id="semester" name="semester" value={formData.semester} onChange={handleChange} required>
                   <option value="">Select semester</option>
                   {[1,2,3,4,5,6,7,8,9,10].map(s => (
                     <option key={s} value={s}>{s}</option>

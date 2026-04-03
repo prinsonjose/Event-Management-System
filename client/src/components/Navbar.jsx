@@ -18,7 +18,7 @@ const Navbar = () => {
   const isAdmin = user.role === 'admin';
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${menuOpen ? 'navbar-menu-open' : ''}`}>
       <div className="navbar-container">
         <Link to={isAdmin ? '/admin' : '/student'} className="navbar-logo">
           <span className="logo-icon">🎓</span>
@@ -28,31 +28,31 @@ const Navbar = () => {
         <button className="navbar-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
           <span className={`hamburger ${menuOpen ? 'active' : ''}`}></span>
         </button>
+      </div>
 
-        <div className={`navbar-menu ${menuOpen ? 'open' : ''}`}>
-          <div className="navbar-links">
-            {isAdmin ? (
-              <>
-                <Link to="/admin" className="nav-link" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-                <Link to="/admin/create-event" className="nav-link" onClick={() => setMenuOpen(false)}>Create Event</Link>
-                <Link to="/profile" className="nav-link" onClick={() => setMenuOpen(false)}>Profile</Link>
-              </>
-            ) : (
-              <>
-                <Link to="/student" className="nav-link" onClick={() => setMenuOpen(false)}>Events</Link>
-                <Link to="/student/my-registrations" className="nav-link" onClick={() => setMenuOpen(false)}>My Registrations</Link>
-                <Link to="/profile" className="nav-link" onClick={() => setMenuOpen(false)}>Profile</Link>
-              </>
-            )}
-          </div>
+      <div className={`navbar-menu ${menuOpen ? 'open' : ''}`}>
+        <div className="navbar-links">
+          {isAdmin ? (
+            <>
+              <Link to="/admin" className="nav-link" onClick={() => setMenuOpen(false)}>Dashboard</Link>
+              <Link to="/admin/create-event" className="nav-link" onClick={() => setMenuOpen(false)}>Create Event</Link>
+              <Link to="/profile" className="nav-link" onClick={() => setMenuOpen(false)}>Profile</Link>
+            </>
+          ) : (
+            <>
+              <Link to="/student" className="nav-link" onClick={() => setMenuOpen(false)}>Events</Link>
+              <Link to="/student/my-registrations" className="nav-link" onClick={() => setMenuOpen(false)}>My Registrations</Link>
+              <Link to="/profile" className="nav-link" onClick={() => setMenuOpen(false)}>Profile</Link>
+            </>
+          )}
+        </div>
 
-          <div className="navbar-user">
-            <span className="user-greeting">
-              <span className="user-role-badge">{user.role}</span>
-              {user.name}
-            </span>
-            <button className="btn btn-logout" onClick={handleLogout}>Logout</button>
-          </div>
+        <div className="navbar-user">
+          <span className="user-greeting">
+            <span className="user-role-badge">{user.role}</span>
+            {user.name}
+          </span>
+          <button className="btn btn-logout" onClick={handleLogout}>Logout</button>
         </div>
       </div>
     </nav>

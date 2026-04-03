@@ -22,6 +22,11 @@ const eventSchema = new mongoose.Schema(
       required: [true, 'Venue is required'],
       trim: true,
     },
+    location: {
+      type: String,
+      required: [true, 'Location is required'],
+      trim: true,
+    },
     description: {
       type: String,
       required: [true, 'Description is required'],

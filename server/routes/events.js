@@ -65,6 +65,7 @@ router.post(
     body('date').notEmpty().withMessage('Event date is required'),
     body('time').trim().notEmpty().withMessage('Event time is required'),
     body('venue').trim().notEmpty().withMessage('Venue is required'),
+    body('location').trim().notEmpty().withMessage('Location is required'),
     body('description').trim().notEmpty().withMessage('Description is required'),
     body('maxParticipants')
       .isInt({ min: 1 })
@@ -107,7 +108,7 @@ router.put('/:id', auth, authorize('admin'), async (req, res, next) => {
       return res.status(403).json({ message: 'You can only edit your own events' });
     }
 
-    const allowedFields = ['name', 'date', 'time', 'venue', 'description', 'maxParticipants'];
+    const allowedFields = ['name', 'date', 'time', 'venue', 'location', 'description', 'maxParticipants'];
     const updates = {};
     allowedFields.forEach((field) => {
       if (req.body[field] !== undefined) {

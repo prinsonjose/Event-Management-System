@@ -143,9 +143,10 @@ a:hover {
   gap: 1rem;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 600px) {
   .form-row {
     flex-direction: column;
+    gap: 1.25rem;
   }
 }
 

@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import API from '../api';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
-import Alert from '../components/Alert';
+import Popup from '../components/Popup';
 import './Dashboard.css';
 
 const MyRegistrations = () => {
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [alert, setAlert] = useState(null);
+  const [popup, setPopup] = useState(null);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -18,7 +18,12 @@ const MyRegistrations = () => {
       const { data } = await API.get('/registrations/my');
       setRegistrations(data.registrations);
     } catch (err) {
-      setAlert({ type: 'error', message: 'Failed to load registrations' });
+      setPopup({
+        type: 'error',
+        title: 'Error',
+        message: 'Failed to load registrations',
+        onConfirm: () => setPopup(null)
+      });
     } finally {
       setLoading(false);
     }
@@ -27,28 +32,46 @@ const MyRegistrations = () => {
   useEffect(() => { fetchRegistrations(); }, []);
 
   const handleCancel = async (eventId) => {
-    if (!window.confirm('Are you sure you want to cancel this registration?')) return;
-    try {
-      await API.delete(`/registrations/${eventId}`);
-      setRegistrations(registrations.filter(r => (r.event?._id || r.event) !== eventId));
-      setAlert({ type: 'success', message: 'Registration cancelled successfully' });
-    } catch (err) {
-      setAlert({ type: 'error', message: err.response?.data?.message || 'Failed to cancel registration' });
-    }
+    setPopup({
+      type: 'confirm',
+      title: 'Cancel Registration',
+      message: 'Are you sure you want to cancel this registration?',
+      onConfirm: async () => {
+        setPopup(null);
+        try {
+          await API.delete(`/registrations/${eventId}`);
+          setRegistrations(registrations.filter(r => (r.event?._id || r.event) !== eventId));
+          setPopup({
+            type: 'success',
+            title: 'Success',
+            message: 'Registration cancelled successfully.',
+            onConfirm: () => setPopup(null)
+          });
+        } catch (err) {
+          setPopup({
+            type: 'error',
+            title: 'Error',
+            message: err.response?.data?.message || 'Failed to cancel registration',
+            onConfirm: () => setPopup(null)
+          });
+        }
+      },
+      onCancel: () => setPopup(null)
+    });
   };
 
   if (loading) return <LoadingSpinner text="Loading your registrations..." />;
 
   return (
     <div className="dashboard">
+      {popup && <Popup {...popup} />}
+      
       <div className="dashboard-header">
         <div>
           <h1>My Registrations</h1>
           <p className="dashboard-subtitle">Events you've registered for</p>
         </div>
       </div>
-
-      {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
 
       {registrations.length === 0 ? (
         <div className="empty-state">

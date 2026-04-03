@@ -13,7 +13,7 @@ const EventForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const [alert, setAlert] = useState(null);
   const [formData, setFormData] = useState({
-    name: '', date: '', time: '', venue: '', description: '', maxParticipants: '',
+    name: '', date: '', time: '', venue: '', location: '', description: '', maxParticipants: '',
   });
 
   useEffect(() => {
@@ -27,6 +27,7 @@ const EventForm = () => {
             date: e.date ? new Date(e.date).toISOString().split('T')[0] : '',
             time: e.time,
             venue: e.venue,
+            location: e.location || '',
             description: e.description,
             maxParticipants: e.maxParticipants,
           });
@@ -81,7 +82,7 @@ const EventForm = () => {
         <form onSubmit={handleSubmit} className="event-form">
           <div className="form-group">
             <label htmlFor="name">Event Name *</label>
-            <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} placeholder="Annual Tech Fest 2024" required />
+            <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} placeholder="Annual Tech Fest 2026" required />
           </div>
 
           <div className="form-row">
@@ -101,9 +102,13 @@ const EventForm = () => {
               <input type="text" id="venue" name="venue" value={formData.venue} onChange={handleChange} placeholder="Main Auditorium" required />
             </div>
             <div className="form-group">
-              <label htmlFor="maxParticipants">Max Participants *</label>
-              <input type="number" id="maxParticipants" name="maxParticipants" value={formData.maxParticipants} onChange={handleChange} placeholder="100" min="1" required />
+              <label htmlFor="location">Location *</label>
+              <input type="text" id="location" name="location" value={formData.location} onChange={handleChange} placeholder="Campus Ground / Room 101" required />
             </div>
+          </div>
+          <div className="form-group">
+            <label htmlFor="maxParticipants">Max Participants *</label>
+            <input type="number" id="maxParticipants" name="maxParticipants" value={formData.maxParticipants} onChange={handleChange} placeholder="100" min="1" required />
           </div>
 
           <div className="form-group">
