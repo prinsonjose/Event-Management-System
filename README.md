@@ -64,8 +64,8 @@ npm install
 Edit `.env` if needed:
 ```
 PORT=5000
-MONGO_URI=mongodb://localhost:27017/college-events
-JWT_SECRET=college_event_mgmt_secret_key_2026
+MONGO_URI=
+JWT_SECRET=c
 ```
 
 Start the backend:
